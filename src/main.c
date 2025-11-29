@@ -15,67 +15,47 @@
 /*       > _.="                            "=._ <                             */
 /*      (_/                                    \_)                            */
 /*                                                                            */
-/*      Filename: ft_ping.h                                                   */
+/*      Filename: main.c                                                      */
 /*      By: espadara <espadara@pirate.capn.gg>                                */
-/*      Created: 2025/11/29 12:34:36 by espadara                              */
-/*      Updated: 2025/11/30 00:52:48 by espadara                              */
+/*      Created: 2025/11/29 21:34:00 by espadara                              */
+/*      Updated: 2025/11/29 21:34:59 by espadara                              */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef FT_PING_H
-# define FT_PING_H
+#include "ft_ping.h"
 
-/* 🐙 KRAKENLIB INTEGRATION */
-# include "krakenlib.h"
+t_ping *g_ping = NULL;
 
-/* Network Specific Headers */
-# include <signal.h>
-# include <sys/time.h>
-# include <arpa/inet.h>
-# include <sys/socket.h>
-# include <netdb.h>
-# include <netinet/ip.h>
-# include <netinet/ip_icmp.h>
-# include <errno.h>
-
-/* Configuration */
-# define PING_PKT_SIZE 64
-# define RECV_BUFFER_SIZE 1024
-# define TTL_DEFAULT 64
-
-/* ** The Global Logbook
-** We use double for calculations to handle sub-millisecond precision.
-*/
-typedef struct s_ping_stats
+static void init_struct(t_ping *ping, char *addr)
 {
-    long    tx_packets;
-    long    rx_packets;
-    double  t_min;
-    double  t_max;
-    double  t_sum;
-    double  t_sq_sum;
-}   t_ping_stats;
+  sea_bzero(ping, sizeof(t_ping));
+  ping->hostname = addr;
+  ping->pid = getpid();
+  ping->stats.t_min = 0.0;
+  ping->stats.t_max = 0.0;
+  // Default interval (1 second)
+  ping->interval = 1;
+  g_ping = ping;
+}
 
-typedef struct s_ping
+int main(int argc, char **argv)
 {
-    int                 sockfd;
-    int                 pid;
-    char                *hostname;
-    char                ip_str[INET_ADDRSTRLEN];
-    struct sockaddr_in  dest_addr;
-    struct timeval      start_time;
-    t_ping_stats        stats;
-    int                 interval;
-}   t_ping;
+  t_ping  ping;
 
-/* Global Access for Signal Handlers */
-extern t_ping *g_ping;
+  if (getuid() != 0)
+    {
+      sea_printf("ft_ping: usage error: Destination address required\n");
+      return (EXIT_FAILURE);
+    }
+  if (argc < 2)
+    {
+      sea_printf("ft_ping: usage error: Destination address required\n");
+      return (EXIT_FAILURE);
+    }
+  init_struct(&ping, argv[1]);
+  signal(SIGINT, handle_signal);
+  init_socket(&ping);
+  loop_ping(&ping);
 
-/* Prototypes */
-unsigned short  checksum(void *b, int len);
-void            init_socket(t_ping *ping);
-void            loop_ping(t_ping *ping);
-void            print_stats(t_ping *ping);
-void            handle_signal(int sig);
-
-#endif
+  return (EXIT_SUCCESS);
+}
