@@ -18,7 +18,7 @@
 #      Filename: Makefile                                                      #
 #      By: espadara <espadara@pirate.capn.gg>                                  #
 #      Created: 2025/11/29 12:33:21 by espadara                                #
-#      Updated: 2025/11/29 12:33:50 by espadara                                #
+#      Updated: 2025/11/29 14:49:56 by espadara                                #
 #                                                                              #
 # ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; #
 
@@ -48,7 +48,7 @@ SOURCES = \
     ping_loop.c \
     signal_handler.c \
     stats_calculator.c \
-    utils.c
+    checksum.c
 
 OBJS = $(addprefix $(OBJ_PATH), $(SOURCES:.c=.o))
 VPATH = $(SRCS_PATH)
