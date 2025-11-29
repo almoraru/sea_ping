@@ -18,7 +18,7 @@
 /*      Filename: ping_loop.c                                                 */
 /*      By: espadara <espadara@pirate.capn.gg>                                */
 /*      Created: 2025/11/29 16:41:04 by espadara                              */
-/*      Updated: 2025/11/29 16:43:33 by espadara                              */
+/*      Updated: 2025/11/30 00:54:06 by espadara                              */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,6 +53,7 @@ static void print_reply(t_ping *ping, char *buf, ssize_t ret, double rtt)
   struct icmp *icmp;
   char src_ip[INET_ADDRSTRLEN];
 
+  (void)ping;
   // IP Header is at the start of the buffer
   ip = (struct ip *)buf;
   // ICMP Header starts after the IP Header (length is in 32-bit words)

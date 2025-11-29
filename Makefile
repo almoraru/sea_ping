@@ -18,7 +18,7 @@
 #      Filename: Makefile                                                      #
 #      By: espadara <espadara@pirate.capn.gg>                                  #
 #      Created: 2025/11/29 12:33:21 by espadara                                #
-#      Updated: 2025/11/29 14:49:56 by espadara                                #
+#      Updated: 2025/11/30 00:54:43 by espadara                                #
 #                                                                              #
 # ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; #
 
@@ -47,7 +47,6 @@ SOURCES = \
     icmp_packer.c \
     ping_loop.c \
     signal_handler.c \
-    stats_calculator.c \
     checksum.c
 
 OBJS = $(addprefix $(OBJ_PATH), $(SOURCES:.c=.o))

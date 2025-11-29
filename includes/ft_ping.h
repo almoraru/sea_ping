@@ -18,7 +18,7 @@
 /*      Filename: ft_ping.h                                                   */
 /*      By: espadara <espadara@pirate.capn.gg>                                */
 /*      Created: 2025/11/29 12:34:36 by espadara                              */
-/*      Updated: 2025/11/30 00:52:48 by espadara                              */
+/*      Updated: 2025/11/30 00:54:21 by espadara                              */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,6 +74,7 @@ extern t_ping *g_ping;
 /* Prototypes */
 unsigned short  checksum(void *b, int len);
 void            init_socket(t_ping *ping);
+void            craft_packet(t_ping *ping, char *buf, int seq);
 void            loop_ping(t_ping *ping);
 void            print_stats(t_ping *ping);
 void            handle_signal(int sig);
