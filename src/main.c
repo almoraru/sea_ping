@@ -18,7 +18,7 @@
 /*      Filename: main.c                                                      */
 /*      By: espadara <espadara@pirate.capn.gg>                                */
 /*      Created: 2025/11/29 21:34:00 by espadara                              */
-/*      Updated: 2025/11/30 15:38:40 by espadara                              */
+/*      Updated: 2025/11/30 15:40:48 by espadara                              */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,10 +78,10 @@ static void parse_args(t_ping *ping, int argc, char **argv)
     }
 }
 
-static void init_struct(t_ping *ping, char *addr)
+static void init_struct(t_ping *ping)
 {
   sea_bzero(ping, sizeof(t_ping));
-  ping->hostname = addr;
+  ping->hostname = NULL;
   ping->pid = getpid();
   ping->stats.t_min = 0.0;
   ping->stats.t_max = 0.0;
@@ -101,7 +101,7 @@ int main(int argc, char **argv)
       return (EXIT_FAILURE);
     }
   // Init
-  init_struct(&ping, argv[1]);
+  init_struct(&ping);
   // Parse
   parse_args(&ping, argc, argv);
   // Setup signals
