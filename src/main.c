@@ -18,7 +18,7 @@
 /*      Filename: main.c                                                      */
 /*      By: espadara <espadara@pirate.capn.gg>                                */
 /*      Created: 2025/11/29 21:34:00 by espadara                              */
-/*      Updated: 2025/11/30 15:40:48 by espadara                              */
+/*      Updated: 2025/11/30 16:05:37 by espadara                              */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,6 +47,8 @@ static void parse_args(t_ping *ping, int argc, char **argv)
         {
           if (sea_strcmp(argv[i], "-v") == 0 || sea_strcmp(argv[i], "--verbose") == 0)
             ping->verbose = 1;
+          else if (sea_strcmp(argv[i], "-f") == 0 || sea_strcmp(argv[i], "--flood") == 0)
+            ping->flood = 1;
           else if (sea_strcmp(argv[i], "-?") == 0 || sea_strcmp(argv[i], "--help") == 0)
             {
               print_usage();
@@ -85,9 +87,9 @@ static void init_struct(t_ping *ping)
   ping->pid = getpid();
   ping->stats.t_min = 0.0;
   ping->stats.t_max = 0.0;
-  // Default interval (1 second)
   ping->interval = 1;
   ping->verbose = 0;
+  ping->flood = 0;
   g_ping = ping;
 }
 

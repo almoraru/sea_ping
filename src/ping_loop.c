@@ -18,7 +18,7 @@
 /*      Filename: ping_loop.c                                                 */
 /*      By: espadara <espadara@pirate.capn.gg>                                */
 /*      Created: 2025/11/29 16:41:04 by espadara                              */
-/*      Updated: 2025/11/30 13:31:18 by espadara                              */
+/*      Updated: 2025/11/30 16:12:55 by espadara                              */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -93,12 +93,15 @@ void loop_ping(t_ping *ping)
       if (sendto(ping->sockfd, send_buf, PING_PKT_SIZE, 0,
                  (struct sockaddr *)&ping->dest_addr, sizeof(ping->dest_addr)) < 0)
         {
-          sea_printf("ft_ping: sendto error\n");
-            // Don't exit, just try next loop
+          if (ping->verbose) sea_printf("ft_ping: sendto error\n");
+          if (ping->flood) write(1, "E", 1);
         }
-      else
+      else{
           ping->stats.tx_packets++;
-      // We wait for a reply. Using recvfrom which blocks until timeout (set in init).
+          if (ping->flood) write (1, ".", 1);
+          }
+
+      // --- Recieve ---
         addr_len = sizeof(from_addr);
         ret = recvfrom(ping->sockfd, recv_buf, RECV_BUFFER_SIZE, 0,
                        (struct sockaddr *)&from_addr, &addr_len);
@@ -108,13 +111,16 @@ void loop_ping(t_ping *ping)
             ip_header = (struct ip *)recv_buf;
             icmp_header = (struct icmp *)(recv_buf + (ip_header->ip_hl << 2));
 
+            // re-populate src_ip to avoid empty ip
+            inet_ntop(AF_INET, &ip_header->ip_src, src_ip, INET_ADDRSTRLEN);
+
             // Check: Is it an Echo Reply (Type 0) and is it OURS (ID match)?
             if (icmp_header->icmp_type == ICMP_ECHOREPLY &&
                 icmp_header->icmp_id == htons(ping->pid))
               {
                 // Retrieve the timestamp we hid in the payload
                 struct timeval sent_time;
-                struct timeval  curr_time;
+                struct timeval curr_time;
 
                 char *payload = recv_buf + (ip_header->ip_hl << 2) + 8;
                 sea_memcpy_fast(&sent_time, payload, sizeof(sent_time));
@@ -122,14 +128,20 @@ void loop_ping(t_ping *ping)
 
                 double rtt = get_time_diff(&sent_time, &curr_time);
                 update_stats(ping, rtt);
-                print_reply(ping, recv_buf, ret, rtt);
+
+                if (ping->flood)
+                  write(1, "\b \b", 3);
+                else
+                  print_reply(ping, recv_buf, ret, rtt);
               }
             else if (ping->verbose)
               {
-                sea_printf("%d bytes from %s: type=%d code=%d\n",
-                    ret, src_ip, icmp_header->icmp_type, icmp_header->icmp_code);
+                if (!ping->flood)
+                  sea_printf("%d bytes from %s: type=%d code=%d\n",
+                             ret, src_ip, icmp_header->icmp_type, icmp_header->icmp_code);
               }
           }
-        sleep(1);
+        if (!ping->flood)
+          sleep(ping->interval);
     }
 }
