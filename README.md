@@ -113,7 +113,7 @@ round-trip min/avg/max/stddev = 5.416/5.526/5.636/0.110 ms
 This project was built for the 42 School curriculum.
 Licensed under the **Kraken License**: *Take what you can, give nothing back.* (Just kidding, it's open source).
 
-\<div align="center"\>
-\<b\>Made with 💀 and C by espadara\</b\>
-\</div\>
+<div align="center"\>
+<b\>Made with 💀 and C by espadara\</b\>
+</div\>
 
