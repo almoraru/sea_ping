@@ -18,7 +18,7 @@
 /*      Filename: socket_handler.c                                            */
 /*      By: espadara <espadara@pirate.capn.gg>                                */
 /*      Created: 2025/11/29 15:32:12 by espadara                              */
-/*      Updated: 2025/11/30 16:39:36 by espadara                              */
+/*      Updated: 2025/11/30 16:44:24 by espadara                              */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -105,6 +105,7 @@ void init_socket(t_ping *ping)
         exit(EXIT_FAILURE);
       }
     setup_timeout(ping->sockfd);
+    gettimeofday(&ping->start_time, NULL);
     sea_printf("PING %s (%s): %d data bytes\n",
         ping->hostname, ping->ip_str, PING_PKT_SIZE - 8);
 }
