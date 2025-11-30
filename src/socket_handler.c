@@ -18,7 +18,7 @@
 /*      Filename: socket_handler.c                                            */
 /*      By: espadara <espadara@pirate.capn.gg>                                */
 /*      Created: 2025/11/29 15:32:12 by espadara                              */
-/*      Updated: 2025/11/30 15:45:06 by espadara                              */
+/*      Updated: 2025/11/30 16:39:36 by espadara                              */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -97,7 +97,7 @@ void init_socket(t_ping *ping)
       exit(EXIT_FAILURE);
     }
     // Set Time-To-Live (TTL)
-    ttl_val = TTL_DEFAULT;
+    ttl_val = ping->ttl;
     //ttl_val = 1;
     if (setsockopt(ping->sockfd, IPPROTO_IP, IP_TTL, &ttl_val, sizeof(ttl_val)) != 0)
       {

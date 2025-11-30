@@ -18,7 +18,7 @@
 /*      Filename: ping_loop.c                                                 */
 /*      By: espadara <espadara@pirate.capn.gg>                                */
 /*      Created: 2025/11/29 16:41:04 by espadara                              */
-/*      Updated: 2025/11/30 16:12:55 by espadara                              */
+/*      Updated: 2025/11/30 16:40:59 by espadara                              */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,6 +33,22 @@ static double get_time_diff(struct timeval *start, struct timeval *end)
   s = start->tv_sec * 1000.0 + start->tv_usec / 1000.0;
   e = end->tv_sec * 1000.0 + end->tv_usec / 1000.0;
   return (e - s);
+}
+
+static int check_deadline(t_ping *ping)
+{
+  struct timeval curr;
+  double elapsed;
+
+  if (ping->deadline == 0)
+    return (0);
+
+  gettimeofday(&curr, NULL);
+  elapsed = get_time_diff(&ping->start_time, &curr) / 1000.0;
+
+  if (elapsed >= ping->deadline)
+    return (1);
+  return (0);
 }
 
 static void update_stats(t_ping *ping, double rtt)
@@ -87,6 +103,10 @@ void loop_ping(t_ping *ping)
   seq = 0;
   while (1)
     {
+
+      // Check deadline
+      if (check_deadline(ping))
+        handle_signal(SIGINT);
       // --- SEND ---
       sea_bzero(send_buf, PING_PKT_SIZE);
       craft_packet(ping, send_buf, ++seq);

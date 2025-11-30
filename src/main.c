@@ -18,7 +18,7 @@
 /*      Filename: main.c                                                      */
 /*      By: espadara <espadara@pirate.capn.gg>                                */
 /*      Created: 2025/11/29 21:34:00 by espadara                              */
-/*      Updated: 2025/11/30 16:05:37 by espadara                              */
+/*      Updated: 2025/11/30 16:41:29 by espadara                              */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,19 +54,33 @@ static void parse_args(t_ping *ping, int argc, char **argv)
               print_usage();
               exit(EXIT_SUCCESS);
             }
-          else
+          else if (sea_strcmp(argv[i], "--ttl") == 0)
             {
-              sea_printf("ft_ping: invalid option -- '%s'\n", argv[i] + 1);
-              print_usage();
-              exit(EXIT_FAILURE);
+              if (i + 1 >= argc) {
+                sea_printf("ft_ping: option '--ttl' requires an argument\n");
+                exit(EXIT_FAILURE);
+              }
+              ping->ttl = sea_atoi(argv[++i]); // Consume value
+            }
+          else if (sea_strcmp(argv[i], "-w") == 0)
+            {
+              if (i + 1 >= argc) {
+                sea_printf("ft_ping: option '-w' requires an argument\n");
+                exit(EXIT_FAILURE);
+              }
+              ping->deadline = sea_atoi(argv[++i]);
+            }
+            else
+            {
+                sea_printf("ft_ping: invalid option -- '%s'\n", argv[i] + 1);
+                print_usage();
+                exit(EXIT_FAILURE);
             }
         }
       else
         {
           if (ping->hostname != NULL)
             {
-              // Already have a hostname? standard ping ignores extras or errors out.
-              // We will error out to be strict.
               sea_printf("ft_ping: usage error: More than one destination.\n");
               exit(EXIT_FAILURE);
             }
@@ -90,6 +104,8 @@ static void init_struct(t_ping *ping)
   ping->interval = 1;
   ping->verbose = 0;
   ping->flood = 0;
+  ping->ttl = TTL_DEFAULT;
+  ping->deadline = 0;
   g_ping = ping;
 }
 
