@@ -114,6 +114,6 @@ This project was built for the 42 School curriculum.
 Licensed under the **Kraken License**: *Take what you can, give nothing back.* (Just kidding, it's open source).
 
 <div align="center"\>
-<b\>Made with 💀 and C by espadara\</b\>
+<b\>Made with 💀 and C by espadara</b\>
 </div\>
 
