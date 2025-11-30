@@ -18,7 +18,7 @@
 /*      Filename: ping_loop.c                                                 */
 /*      By: espadara <espadara@pirate.capn.gg>                                */
 /*      Created: 2025/11/29 16:41:04 by espadara                              */
-/*      Updated: 2025/11/30 00:54:06 by espadara                              */
+/*      Updated: 2025/11/30 13:23:26 by espadara                              */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,7 +63,7 @@ static void print_reply(t_ping *ping, char *buf, ssize_t ret, double rtt)
   inet_ntop(AF_INET, &ip->ip_src, src_ip, INET_ADDRSTRLEN);
 
   // Format: "64 bytes from 1.2.3.4: icmp_seq=1 ttl=64 time=0.045 ms"
-  sea_printf("%ld bytes from %s: icmp_seq=%d ttl=%d time=%.3f ms\n",
+  sea_printf("%ld bytes from %s: icmp_seq=%d ttl=%d time=%.2f ms\n",
              ret - (ip->ip_hl << 2), // Payload size (Total - IP Header)
              src_ip,
              ntohs(icmp->icmp_seq),
@@ -80,7 +80,6 @@ void loop_ping(t_ping *ping)
   socklen_t       addr_len;
   int             seq;
   ssize_t         ret;
-  struct timeval  curr_time;
   struct ip       *ip_header;
   struct icmp     *icmp_header;
 
@@ -113,15 +112,18 @@ void loop_ping(t_ping *ping)
                 icmp_header->icmp_id == htons(ping->pid))
               {
                 // Retrieve the timestamp we hid in the payload
-                struct timeval *sent_time = (struct timeval *)(recv_buf +
-                          (ip_header->ip_hl << 2) + sizeof(struct icmp));
+                struct timeval sent_time;
+                struct timeval  curr_time;
+
+                char *payload = recv_buf + (ip_header->ip_hl << 2) + 8;
+                sea_memcpy_fast(&sent_time, payload, sizeof(sent_time));
                 gettimeofday(&curr_time, NULL);
-                double rtt = get_time_diff(sent_time, &curr_time);
+
+                double rtt = get_time_diff(&sent_time, &curr_time);
                 update_stats(ping, rtt);
                 print_reply(ping, recv_buf, ret, rtt);
               }
           }
-        // Standard ping waits 1 second between packets.
         sleep(1);
     }
 }
