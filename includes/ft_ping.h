@@ -18,7 +18,7 @@
 /*      Filename: ft_ping.h                                                   */
 /*      By: espadara <espadara@pirate.capn.gg>                                */
 /*      Created: 2025/11/29 12:34:36 by espadara                              */
-/*      Updated: 2025/11/30 00:54:21 by espadara                              */
+/*      Updated: 2025/11/30 13:26:38 by espadara                              */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,6 +66,7 @@ typedef struct s_ping
     struct timeval      start_time;
     t_ping_stats        stats;
     int                 interval;
+    int                 verbose;
 }   t_ping;
 
 /* Global Access for Signal Handlers */

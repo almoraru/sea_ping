@@ -18,7 +18,7 @@
 /*      Filename: ping_loop.c                                                 */
 /*      By: espadara <espadara@pirate.capn.gg>                                */
 /*      Created: 2025/11/29 16:41:04 by espadara                              */
-/*      Updated: 2025/11/30 13:23:26 by espadara                              */
+/*      Updated: 2025/11/30 13:31:18 by espadara                              */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,6 +76,7 @@ void loop_ping(t_ping *ping)
 {
   char            send_buf[PING_PKT_SIZE];
   char            recv_buf[RECV_BUFFER_SIZE];
+  char            src_ip[INET_ADDRSTRLEN];
   struct sockaddr_in from_addr;
   socklen_t       addr_len;
   int             seq;
@@ -122,6 +123,11 @@ void loop_ping(t_ping *ping)
                 double rtt = get_time_diff(&sent_time, &curr_time);
                 update_stats(ping, rtt);
                 print_reply(ping, recv_buf, ret, rtt);
+              }
+            else if (ping->verbose)
+              {
+                sea_printf("%d bytes from %s: type=%d code=%d\n",
+                    ret, src_ip, icmp_header->icmp_type, icmp_header->icmp_code);
               }
           }
         sleep(1);
