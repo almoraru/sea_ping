@@ -18,7 +18,7 @@
 /*      Filename: icmp_packer.c                                               */
 /*      By: espadara <espadara@pirate.capn.gg>                                */
 /*      Created: 2025/11/29 16:18:18 by espadara                              */
-/*      Updated: 2025/11/29 16:19:44 by espadara                              */
+/*      Updated: 2025/11/30 13:18:26 by espadara                              */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,7 @@
 void craft_packet(t_ping *ping, char *buf, int seq)
 {
   struct icmp *icmp;
-  struct timeval *tv;
+  struct timeval tv;
 
   // Point struct to buffer (No Malloc!)
   icmp = (struct icmp *)buf;
@@ -48,9 +48,8 @@ void craft_packet(t_ping *ping, char *buf, int seq)
   icmp->icmp_id = htons(ping->pid); // Our PID identifies this ping session
   icmp->icmp_seq = htons(seq);  // Sequence number (network byte order)
   // Embed Timestamp in Payload
-  // This allows us to calculate RTT statelessly when we get the reply.
-  tv = (struct timeval *)(buf + sizeof(struct icmp));
-  gettimeofday(tv, NULL);
+  gettimeofday(&tv, NULL);
+  sea_memcpy_fast(buf + 8, &tv, sizeof(tv));
   //  Calculate Checksum
   // Checksum must be 0 before calculation
   icmp->icmp_cksum = 0;
