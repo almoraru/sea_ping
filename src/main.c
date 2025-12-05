@@ -18,7 +18,7 @@
 /*      Filename: main.c                                                      */
 /*      By: espadara <espadara@pirate.capn.gg>                                */
 /*      Created: 2025/11/29 21:34:00 by espadara                              */
-/*      Updated: 2025/11/30 16:41:29 by espadara                              */
+/*      Updated: 2025/12/05 11:18:07 by almoraru                              */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,13 +28,18 @@ t_ping *g_ping = NULL;
 
 void print_usage(void)
 {
+{
     sea_printf("Usage: ft_ping [OPTION...] HOST ...\n");
     sea_printf("Send ICMP ECHO_REQUEST packets to network hosts.\n\n");
     sea_printf(" Options:\n");
     sea_printf("  -v, --verbose      verbose output\n");
+    sea_printf("  -f, --flood        flood ping\n");
+    sea_printf("      --ttl=N        specify N as time-to-live\n");
+    sea_printf("  -w <deadline>      timeout before ping exits (in seconds)\n");
     sea_printf("  -?, --help         give this help list\n");
     sea_printf("\n");
     sea_printf("Mandatory or optional arguments to long options are also mandatory for any corresponding short options.\n");
+}
 }
 
 static void parse_args(t_ping *ping, int argc, char **argv)
@@ -115,7 +120,7 @@ int main(int argc, char **argv)
 
   if (getuid() != 0)
     {
-      sea_printf("ft_ping: usage error: Destination address required\n");
+      sea_printf("ft_ping: usage error: Destination address required\nDid you run as root?\n");
       return (EXIT_FAILURE);
     }
   // Init
